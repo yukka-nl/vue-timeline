@@ -1,7 +1,7 @@
 <html lang="en">
 	<head>
 	  <meta charset="utf-8">
-	  <title>Test Lab</title>
+	  <title>Vue Timeline</title>
 	  <meta name="description" content="Test Lab">
 	  <meta name="author" content="Thijs Kuilman">
 	  <link rel="stylesheet" href="assets/css/main.css">
@@ -10,7 +10,7 @@
 	<body>
 
 		<div id="app">
-			<div class="timeline" id="timeline">
+			<div class="timeline" id="timeline" v-on:mousemove="dragTimeline($event)" v-on:mousedown="setMouseTracking($event, true)" v-on:mouseup="setMouseTracking($event, false)" v-on:mouseleave="disableScrolling()">
 				<div class="upper-events">
 					<div class="event-card" v-for="event in upperTimelineEvents">
 						<div class="date">{{ event.date }}</div> 
@@ -48,27 +48,29 @@
 <script type="text/javascript">
 	var app = new Vue({
 		el: '#app',
-		mounted: function () {
-		    
-		},
 		data: {
 			events: [
 				{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
 				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
 				{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
 				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
-					{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
+				{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
 				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
 				{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
 				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
-					{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
+				{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
 				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
 				{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
 				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
-		
 				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
 				{ title: 'Groningen Festival', description: 'Lorem ipsum dolor sit amet', date: '19-11-2017' }
-			]
+			],
+			scrollable: false,
+			mouseTracking: false,
+			start_x: 5,
+		},
+		mounted: function() {
+			document.getElementById("mainline").style.width = timeline.scrollWidth;
 		},
 		computed: {
 			lowerTimelineEvents: function () {
@@ -85,86 +87,55 @@
 					}
 				})
 			},
+		},
+		methods: {
+			setMouseTracking: function(event, tracking) {
+				this.start_x = event.clientX;
+				this.mouseTracking = tracking;
+			},
+			dragTimeline: function(event) {
+				if(this.mouseTracking) {
+					this.current_x = event.clientX;
+					movingPixels = (this.current_x - this.start_x) * -1;
+					this.scrollTimeline(movingPixels);
+					this.start_x = this.current_x;
+				}
+			},
+			scrollTimeline: function(movingPixels) {
+			   timeline.scrollTop += movingPixels;
+			   timeline.scrollLeft += movingPixels;
+			},
+			disableScrolling: function(scrolling) {
+				this.mouseTracking = false;
+			}
 		}
 	})
 </script>
 
-<style>
-	body {
-		padding: 20px;
-		background: #202020;
-		font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-	}
-</style>
-
 <script>
-	var timeline = document.getElementById("timeline");
-	var scrollableTimeline = false;
+	// var timeline = document.getElementById("timeline");
+	// var scrollableTimeline = false;
 
-	function scrollTimeline(movingPixels){
-	   timeline.scrollTop += movingPixels;
-	   timeline.scrollLeft += movingPixels;
-	}
+	// Mouse scroll TODO: convert to Vue method
+	// window.addEventListener('mousewheel', mouseWheelEvent);
+	// window.addEventListener('DOMMouseScroll', mouseWheelEvent);
 
-	// Mouse wheel events
-	window.addEventListener('mousewheel', mouseWheelEvent);
-	window.addEventListener('DOMMouseScroll', mouseWheelEvent);
+	// function mouseWheelEvent(e) {
+	// 	if(scrollableTimeline) {
+	// 		var delta = e.wheelDelta ? e.wheelDelta : -e.detail;
+	// 		var movingPixels = -100;
+	// 		if(delta < 0) {
+	// 			movingPixels = 100;
+	// 		}
+	//     	scrollTimeline(movingPixels);
+	// 	}
+	// }
 
-	function mouseWheelEvent(e) {
-		if(scrollableTimeline) {
-			var delta = e.wheelDelta ? e.wheelDelta : -e.detail;
-			var movingPixels = -100;
-			if(delta < 0) {
-				movingPixels = 100;
-			}
-	    	scrollTimeline(movingPixels);
-		}
-	}
+	// timeline.onmouseover = function () {
+	// 	scrollableTimeline = true;
+	// }	
 
-	timeline.onmouseover = function () {
-		scrollableTimeline = true;
-	}
-
-	timeline.onmouseleave = function () {
-		scrollableTimeline = false;
-		mouseTracking = false;
-	}
-
-	/////////////////
-	
-	var start_x = null;
-	var mouseTracking = false;
-	var movingPixels = 0;
-
-	document.getElementById("mainline").style.width = timeline.scrollWidth;
-	timeline.onmousedown = function(event) {
-		start_x = event.clientX;
-		mouseTracking = true;
-	}
-
-	timeline.onmouseout = function(event) {
-		
-	}
-
-	timeline.onmouseup = function(event) {
-		mouseTracking = false;
-	}
-
-	timeline.onmousemove = function(event) {
-
-		  //  event.stopPropagation(); //cancel bubbling
-
-	   // ele = event.target || event.srcElement
-	   // if (ele.id !== "timeline"){  
-	   //   alert('IUT');
-	   // }
-
-		if(mouseTracking) {
-			current_x = event.clientX;
-			movingPixels = (current_x - start_x) * -1;
-			scrollTimeline(movingPixels);
-			start_x = current_x;
-		}
-	}
-	
+	// timeline.onmouseleave = function () {
+	// 	scrollableTimeline = false;
+	// }
 </script>
