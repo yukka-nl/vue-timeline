@@ -1,0 +1,94 @@
+.timeline {
+
+	overflow-x: hidden;
+	white-space: nowrap;
+
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	&:hover {
+		cursor: pointer;
+	}
+
+	.mainline {
+		background: #D32F2F;
+		border-radius: 5px;
+		height: 13px;
+	}
+
+	.event-card {
+		background: #fff;
+		width: 250px;
+		max-height: 80px;
+		padding: 20px;
+		display: inline-block;
+		border-radius: 5px;
+		position: relative;
+		
+		.date {
+			color: #F44336;
+		}
+
+		.date, .title {
+			font-weight: bold;
+		}
+
+		.pointer {
+			position: absolute;
+			width: 250px;			
+			display: flex;
+			justify-content: center;
+
+			.line {
+				width: 13px;
+				height: 80px;
+				background: #F44336;
+				border-radius: 5px;
+				position: absolute;
+			}
+
+			.circle {
+				width: 70px;
+				height: 70px;
+				border-radius: 50%;
+				background: #F44336;
+				position: absolute;
+			}
+		}
+	}
+
+	.upper-events {
+
+		.event-card {
+			margin-left: 250px;
+		}
+
+		margin-bottom: 80px;
+
+		.pointer {
+			bottom: 0;
+		}
+
+		.circle {
+			top: 47px;
+		}
+	}
+
+	.lower-events {
+		margin-top: 80px;
+
+		.event-card {
+			margin-right: 250px;
+		}
+
+		.pointer {
+			top: -80px;
+		}
+
+		.circle {
+			top: -47px;
+		}
+	}
+}

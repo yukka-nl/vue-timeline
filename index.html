@@ -1,0 +1,170 @@
+<html lang="en">
+	<head>
+	  <meta charset="utf-8">
+	  <title>Test Lab</title>
+	  <meta name="description" content="Test Lab">
+	  <meta name="author" content="Thijs Kuilman">
+	  <link rel="stylesheet" href="assets/css/main.css">
+	</head>
+
+	<body>
+
+		<div id="app">
+			<div class="timeline" id="timeline">
+				<div class="upper-events">
+					<div class="event-card" v-for="event in upperTimelineEvents">
+						<div class="date">{{ event.date }}</div> 
+						<div class="title">{{ event.title }}</div>
+						<div class="description">{{ event.description }}</div>
+
+						<div class="pointer">
+							<div class="line"></div>
+							<div class="circle"></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="mainline" id="mainline"></div>
+
+				<div class="lower-events">
+					<div class="event-card" v-for="event in lowerTimelineEvents">
+						<div class="date">{{ event.date }}</div> 
+						<div class="title">{{ event.title }}</div>
+						<div class="description">{{ event.description }}</div>
+
+						<div class="pointer">
+							<div class="line"></div>
+							<div class="circle"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+
+	<script src="https://unpkg.com/vue"></script>
+</html>
+
+<script type="text/javascript">
+	var app = new Vue({
+		el: '#app',
+		mounted: function () {
+		    
+		},
+		data: {
+			events: [
+				{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
+				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
+				{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
+				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
+					{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
+				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
+				{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
+				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
+					{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
+				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
+				{ title: 'Optreden Amsterdam', description: 'Lorem ipsum dolor sit amet', date: '19-10-2017'  },
+				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
+		
+				{ title: 'Den Haag feest', description: 'Lorem ipsum dolor sit amet', date: '05-11-2017' },
+				{ title: 'Groningen Festival', description: 'Lorem ipsum dolor sit amet', date: '19-11-2017' }
+			]
+		},
+		computed: {
+			lowerTimelineEvents: function () {
+				return this.events.filter(function (event, index) {
+					if(index % 2 === 0) {
+						return event;
+					}
+				})
+			},
+			upperTimelineEvents: function () {
+				return this.events.filter(function (event, index) {
+					if(index % 2 !== 0) {
+						return event;
+					}
+				})
+			},
+		}
+	})
+</script>
+
+<style>
+	body {
+		padding: 20px;
+		background: #202020;
+		font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+	}
+</style>
+
+<script>
+	var timeline = document.getElementById("timeline");
+	var scrollableTimeline = false;
+
+	function scrollTimeline(movingPixels){
+	   timeline.scrollTop += movingPixels;
+	   timeline.scrollLeft += movingPixels;
+	}
+
+	// Mouse wheel events
+	window.addEventListener('mousewheel', mouseWheelEvent);
+	window.addEventListener('DOMMouseScroll', mouseWheelEvent);
+
+	function mouseWheelEvent(e) {
+		if(scrollableTimeline) {
+			var delta = e.wheelDelta ? e.wheelDelta : -e.detail;
+			var movingPixels = -100;
+			if(delta < 0) {
+				movingPixels = 100;
+			}
+	    	scrollTimeline(movingPixels);
+		}
+	}
+
+	timeline.onmouseover = function () {
+		scrollableTimeline = true;
+	}
+
+	timeline.onmouseleave = function () {
+		scrollableTimeline = false;
+		mouseTracking = false;
+	}
+
+	/////////////////
+	
+	var start_x = null;
+	var mouseTracking = false;
+	var movingPixels = 0;
+
+	document.getElementById("mainline").style.width = timeline.scrollWidth;
+	timeline.onmousedown = function(event) {
+		start_x = event.clientX;
+		mouseTracking = true;
+	}
+
+	timeline.onmouseout = function(event) {
+		
+	}
+
+	timeline.onmouseup = function(event) {
+		mouseTracking = false;
+	}
+
+	timeline.onmousemove = function(event) {
+
+		  //  event.stopPropagation(); //cancel bubbling
+
+	   // ele = event.target || event.srcElement
+	   // if (ele.id !== "timeline"){  
+	   //   alert('IUT');
+	   // }
+
+		if(mouseTracking) {
+			current_x = event.clientX;
+			movingPixels = (current_x - start_x) * -1;
+			scrollTimeline(movingPixels);
+			start_x = current_x;
+		}
+	}
+	
+</script>
