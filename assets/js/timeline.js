@@ -3,13 +3,13 @@ Vue.component('timeline', {
  		<div class="timeline" id="timeline" v-on:mousemove="dragTimeline($event)" v-on:mousedown="setMouseTracking($event, true)" v-on:mouseup="setMouseTracking($event, false)" v-on:mouseleave="disableScrolling()">
 			<div class="upper-events">
 				<div class="event-card" v-for="event in upperTimelineEvents">
-					<div class="date">{{ event.date }}</div> 
+					<div class="date">{{ dayMonthYearFormat(event.date) }}</div> 
 					<div class="title">{{ event.title }}</div>
 					<div class="description">{{ event.description }}</div>
 
 					<div class="pointer">
 						<div class="line"></div>
-						<div class="circle"></div>
+						<div class="circle">{{ dayMonthFormat(event.date) }}</div>
 					</div>
 				</div>
 			</div>
@@ -18,13 +18,13 @@ Vue.component('timeline', {
 
 			<div class="lower-events">
 				<div class="event-card" v-for="event in lowerTimelineEvents">
-					<div class="date">{{ event.date }}</div> 
+					<div class="date">{{ dayMonthYearFormat(event.date) }}</div> 
 					<div class="title">{{ event.title }}</div>
 					<div class="description">{{ event.description }}</div>
 
 					<div class="pointer">
 						<div class="line"></div>
-						<div class="circle"></div>
+						<div class="circle">{{ dayMonthFormat(event.date) }}</div>
 					</div>
 				</div>
 			</div>
@@ -34,6 +34,7 @@ Vue.component('timeline', {
 			scrollable: false,
 			mouseTracking: false,
 			start_x: 5,
+			language: 'nl-nl',
 		}
 	},
 	props: ['events'],
@@ -54,7 +55,7 @@ Vue.component('timeline', {
 					return event;
 				}
 			})
-		},
+		}
 	},
 	methods: {
 		setMouseTracking: function(event, tracking) {
@@ -75,6 +76,24 @@ Vue.component('timeline', {
 		},
 		disableScrolling: function(scrolling) {
 			this.mouseTracking = false;
+		},
+		dayMonthYearFormat: function(dateString) {
+			var dateObject = new Date(dateString);
+			var month = dateObject.toLocaleString(this.language, { month: "long" });
+			var day = dateObject.getUTCDate();
+			var year = dateObject.getUTCFullYear();
+			return  day + " " + month + " " + year;
+		},
+		dayMonthFormat: function(dateString) {
+			var dateObject = new Date(dateString);
+			var month = dateObject.toLocaleString(this.language, { month: "short" });
+
+			if(month.charAt(month.length - 1) == '.') {
+				month = month.substring(0, month.length - 1);
+			}
+			
+			var day = dateObject.getUTCDate();
+			return  day + " " + month;
 		}
 	}
 })

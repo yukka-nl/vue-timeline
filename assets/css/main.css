@@ -44,7 +44,11 @@ body {
         height: 70px;
         border-radius: 50%;
         background: #F44336;
-        position: absolute; }
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff; }
   .timeline .upper-events {
     margin-bottom: 80px; }
     .timeline .upper-events .event-card {
